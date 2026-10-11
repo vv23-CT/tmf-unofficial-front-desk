@@ -1,6 +1,6 @@
 # Front Desk
 
-Vibe coded by a Web 3 enthusiast.
+Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 **Unofficial.** Front Desk is run by vv23 (GitHub `vv23-CT`), its sole developer. It is not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF).
 
@@ -11,6 +11,10 @@ Front Desk is a Discord bot with a small website. It gives holders of a **TMF Pa
 - **Changes:** [CHANGELOG.md](CHANGELOG.md)
 - **Public documents on GitHub:** https://github.com/vv23-CT/tmf-unofficial-front-desk
 - **Source code:** private. The security report says what that means and what you can check yourself.
+
+## Vibe coded
+
+Front Desk is vibe coded. vv23 built it by directing an AI coding assistant (Claude Code) instead of writing every line by hand, and is the only person working on it. Because of that, the security report sticks to facts you can check: what the code does, which tests cover it, and what was tested live. Read it before you trust the desk with a signature. Its "Check it yourself" steps need no access to the code.
 
 ## How to check in safely
 

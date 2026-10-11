@@ -1,6 +1,6 @@
 # Security Report: Front Desk
 
-Vibe coded by a Web 3 enthusiast.
+Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 **Where to find this report:** the same text is published in three places:
 - on the bot's own site, at `https://tmf-holder-roles.vv23-ct.workers.dev/security` (linked from the verify page and the Discord panel)
@@ -17,7 +17,7 @@ This document describes how Front Desk (code name `tmf-holder-roles`) works and 
 - **Code covered:** the private source repository at the commit that contains this version of the report. On 2026-10-11 that is the documentation commit that follows `e578ed1` (see `CHANGELOG.md`).
 - **Runtime:** a Cloudflare Worker at `https://tmf-holder-roles.vv23-ct.workers.dev`.
 - **Who runs it:** vv23 (GitHub `vv23-CT`), the sole operator and developer as of 2026-10-11. The bot, its site and this report are **not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF)**. The verify page, the Discord panel and the signed message all say so.
-- **How it was made:** vibe coded by a Web 3 enthusiast (vv23, the only person working on it), meaning it was written with an AI coding assistant and reviewed and tested as this report describes.
+- **How it was made:** vibe coded. vv23 built it by directing an AI coding assistant (Claude Code) instead of writing every line by hand, and is the only person working on it. The code was then reviewed and tested as this report describes (section 8). Nothing here relies on trusting how it was written: every claim names its code and test, and the "Check it yourself" steps below need no code access.
 
 ---
 

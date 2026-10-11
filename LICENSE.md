@@ -1,6 +1,6 @@
 # Licence and notes
 
-Vibe coded by a Web 3 enthusiast.
+Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 - **What is here:** the public documents for Front Desk (`README.md`, `SECURITY.md`, `CHANGELOG.md`). They are copied unchanged from the private source repository. The source code is not in this repository and is not licensed here.
 - **Using these documents:** you may read, share and quote them, with a link back to this repository.

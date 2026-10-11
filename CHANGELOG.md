@@ -1,12 +1,13 @@
 # Changelog
 
-Vibe coded by a Web 3 enthusiast.
+Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit hashes refer to the private source repository's history.
 
 ## 2026-10-11
 
 ### Who runs it
+- **One attribution everywhere:** "Run by vv23. Vibe coded by a Web 3 enthusiast." now appears word for word on the verify page, the Discord panel, `/about`, `/security` and every document. The README gains a short "Vibe coded" section explaining what that means.
 - Every document, the verify page and the Discord panel now say the desk is **run by vv23**, its sole developer, instead of "members of the community". Repost the panel with `/verify-setup` to update it in Discord.
 
 ### Public documents
