@@ -6,19 +6,22 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-11
 
+### Who runs it
+- Every document, the verify page and the Discord panel now say the desk is **run by vv23**, its sole developer, instead of "members of the community". Repost the panel with `/verify-setup` to update it in Discord.
+
 ### Public documents
 - **README rewritten for members:** how to check in safely, what the desk can and cannot do, what is stored. The operator guide moved to `SETUP.md`, which stays private.
 - **Security report polished:** a "Check it yourself" table, a note that the source is private, three published locations, and a fresh secret scan of the full history.
 - **New page `/about`**, generated from `README.md` like `/security` is from `SECURITY.md`. The verify page footer links to it.
-- **Public documents repository:** `vv23-CT/tmf-unofficial-front-desk` holds `README.md`, `SECURITY.md` and `CHANGELOG.md` only.
-
+- **Public documents repository:** `vv23-CT/tmf-unofficial-front-desk` holds `README.md`, `SECURITY.md`, `CHANGELOG.md` and a short `LICENSE.md` only.
+- 4 new tests (68 in total): document links, the credit line, the storage ID kept out of public copies, and the "Run by vv23" wording.
 
 ### The desk clerk
 - New bot character: an original pixel-art robot, a CRT terminal with amber eyes and an antenna, on oxblood, drawn by `scripts/draw-desk-clerk.py`. Used as the bot icon and the Discord panel image, replacing the Midas shareholder cutout.
 
 ### Look, wording and the public security page
 - **New design, "Ledger"**, from the TMF community art kit: fund-colour rule, Caslon headline, mono figures, an ADMITTED stamp, light mode and the dark "After Hours" theme.
-- **Clearly unofficial.** The page, the Discord panel and the signed message say the desk is community-run and not affiliated with The Mutual Fun. Config validation refuses footers without that line.
+- **Clearly unofficial.** The page, the Discord panel and the signed message say the desk is unofficial and not affiliated with The Mutual Fun. Config validation refuses footers without that line.
 - **New wording.** Panel "The front desk" with **Check in** and **My papers**; results read **Admitted** to the Breakroom, **Declined** or **Pending**. The signed message now names "Front Desk, an unofficial TMF community desk".
 - **All visible text is editable** in `branding` in `config.json`, and checked against the house style (no dashes, `!`, `<`, `>` or "invite").
 - **Static files** via Cloudflare static assets (`public/`): self-hosted fonts, the panel image and a bot icon, with the same security headers (`public/_headers`). The CSP adds `font-src 'self'`; still nothing loads from other sites.

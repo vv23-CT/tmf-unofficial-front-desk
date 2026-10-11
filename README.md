@@ -2,7 +2,7 @@
 
 Vibe coded by a Web 3 enthusiast.
 
-**Unofficial.** Front Desk is run by members of the community. It is not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF).
+**Unofficial.** Front Desk is run by vv23 (GitHub `vv23-CT`), its sole developer. It is not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF).
 
 Front Desk is a Discord bot with a small website. It gives holders of a **TMF Pass** the **Pass Holder** role, which admits them to the Breakroom. You prove you hold a Pass by signing one text message with your wallet. Signing costs nothing and moves nothing.
 

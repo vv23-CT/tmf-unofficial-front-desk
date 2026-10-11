@@ -16,8 +16,8 @@ This document describes how Front Desk (code name `tmf-holder-roles`) works and 
 - **Report date:** 2026-10-11
 - **Code covered:** the private source repository at the commit that contains this version of the report. On 2026-10-11 that is the documentation commit that follows `e578ed1` (see `CHANGELOG.md`).
 - **Runtime:** a Cloudflare Worker at `https://tmf-holder-roles.vv23-ct.workers.dev`.
-- **Who runs it:** members of the community. The bot, its site and this report are **not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF)**. The verify page, the Discord panel and the signed message all say so.
-- **How it was made:** vibe coded by a Web 3 enthusiast, meaning it was written with an AI coding assistant and reviewed and tested as this report describes.
+- **Who runs it:** vv23 (GitHub `vv23-CT`), the sole operator and developer as of 2026-10-11. The bot, its site and this report are **not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF)**. The verify page, the Discord panel and the signed message all say so.
+- **How it was made:** vibe coded by a Web 3 enthusiast (vv23, the only person working on it), meaning it was written with an AI coding assistant and reviewed and tested as this report describes.
 
 ---
 
@@ -175,7 +175,7 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 
 ## 8. Testing performed
 
-- **Automated tests:** 67, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
+- **Automated tests:** 68, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
 - **Mutation testing**, done manually during development: deliberate bugs were planted in a copy of the code, one at a time, and the test suite was run each time. 19 such bugs were tried, and every one caused a test failure. They included:
   - skipping the link-secret check, the link expiry or single use
   - accepting any signer
