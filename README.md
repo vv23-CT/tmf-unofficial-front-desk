@@ -53,7 +53,7 @@ No private keys, seed phrases, signatures or IP addresses are stored. Removing y
 - **Phones:** on the page, tap *Open in MetaMask*, *Open in Coinbase Wallet* or *Open in Trust Wallet*, then sign inside the wallet app. Hardware wallets work through MetaMask or Rabby.
 - **After a sale:** holdings are re-checked automatically, and the role is removed at the next re-check.
 - **One wallet counts for one Discord account.** Linking a wallet that is already on another account moves it to yours.
-- **Vaults (delegate.xyz):** if your Pass sits in a vault wallet, delegate it at delegate.xyz to a wallet you check in with: the whole vault, the TMF Pass contract, or a single Pass. The vault never signs anything here. The security report explains what has and hasn't been confirmed on Robinhood Chain.
+- **Vaults (delegate.xyz):** if your Pass sits in a vault wallet, delegate it at delegate.xyz to a wallet you check in with: the whole vault, the TMF Pass contract, or a single Pass. The vault never signs anything here. The delegate.xyz registry is deployed on Robinhood Chain (confirmed 2026-10-12).
 - **Limits:** up to 10 check-in links per day (UTC), and short waits between Re-check and Remove a wallet presses.
 
 ## Reporting a problem

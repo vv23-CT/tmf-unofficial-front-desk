@@ -173,7 +173,12 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 - **Endpoints:** the private RPC (`RPC_URL_4663`) is tried first, then Robinhood's public RPC `https://rpc.mainnet.chain.robinhood.com` (`src/chain.ts`).
 - **Limits:** a 20-second timeout per request, a 2 MB response limit, 2 retries. Work that runs after a Discord reply uses 8 seconds and 1 retry, to fit Cloudflare's time limit there. The 10-minute re-check stops starting new members after 30 outbound requests (the free plan allows 50) and starts with the members it missed next time.
 - **Multicall3:** used where it works. Observed by the operator on 2026-10-11: on Robinhood Chain, bundled calls failed while direct calls worked, so direct calls are used and that fact is cached for 24 hours. Multicall3's own deployment list has no entry for chain 4663.
-- **delegate.xyz is on** for Robinhood Chain (`"delegation": true` in `config.json`). delegate.xyz's official README lists the registry as deployed on Robinhood at `0x00000000000000447e69651d841bD8D104Bed493`. That has not been confirmed on-chain for this report, because the environment that prepared it can't reach the Robinhood RPC or explorer. If the registry has no code there, every check is a partial result (roles only added, for 24 hours at most) and the operator switches delegation off.
+- **delegate.xyz is on** for Robinhood Chain (`"delegation": true` in `config.json`). The registry is deployed there at `0x00000000000000447e69651d841bD8D104Bed493`:
+  - delegate.xyz's official README lists it for Robinhood.
+  - On 2026-10-12 the operator checked the address on the Robinhood Chain Blockscout explorer (screenshots). Blockscout shows a contract named **DelegateRegistry**, tagged "delegate.xyz v2", with 2,077 transactions.
+  - Blockscout reports its source as **verified (partial match)** through the Blockscout Bytecode Database: `src/DelegateRegistry.sol`, compiler v0.8.21, optimization on with 9,999,999 runs, verified on Jul 29, 2026. In Blockscout's terms, a partial match means the deployed bytecode matches the published source except for the compiler's metadata.
+
+  If the registry ever stops answering, every check becomes a partial result: roles are only added, for 24 hours at most.
 - **ERC-6551 (Token Bound Accounts)** support exists in the code but isn't enabled: `tba` is empty in `config.json`.
 
 ---
