@@ -153,7 +153,7 @@ No private keys, seed phrases, signatures, Discord login tokens or IP addresses 
 | Secret | Where it lives | Purpose |
 |---|---|---|
 | `DISCORD_BOT_TOKEN` | Cloudflare encrypted secret | Adds and removes roles. Sent only to `https://discord.com/api/v10/` (tested in `test/flow.test.ts`). |
-| `RPC_URL_4663` | Cloudflare encrypted secret | Private RPC endpoint, which contains an API key |
+| `RPC_URL_4663` | Cloudflare encrypted secret | Private RPC endpoint, which contains an API key. Only an encrypted address is used: `https://`, or a `wss://` address used over `https://` on the same host. `http://` is refused. If the name was pasted into the value (`RPC_URL_4663=…`), it is removed. When the value can't be used, the error names only its shape and length, never the value (`rpcOverridesFromEnv`, `src/chain.ts`; tested in `test/chain.test.ts`). |
 
 Neither secret is in the source repository or its git history. On 2026-10-12 every commit up to and including `cad38e3` (28 commits, 257 file versions, including the 79 files inside a deleted art-kit archive) was scanned for Discord bot tokens, webhook URLs, RPC URLs with keys, GitHub and cloud tokens, private keys and API-key patterns. The only matches were the placeholder `SECRETKEY` in a test, an all-zero salt and the public Discord application key. An independent review on 2026-10-11 scanned the 25 commits that existed then and found the same.
 
