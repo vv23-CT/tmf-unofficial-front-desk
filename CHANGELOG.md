@@ -6,6 +6,10 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-12
 
+### Private RPC secret: clearer errors, two paste mistakes fixed
+- **The problem:** a live re-check showed "Pending". `RPC_URL_4663` was set but wasn't an `https://` URL, and the public RPC fallback was rate limited ("Too Many Requests"). No roles changed.
+- **The fix:** the secret check now corrects a `wss://` address and a pasted `RPC_URL_4663=` prefix. It still refuses `http://`. For anything else it says what shape the value has (no `https://`, `http://`, spaces) and its length, never the value. SETUP.md gives the steps to re-save the secret.
+
 ### Security sweep fixes
 Three independent reviews (code, delegation, wallet support) were checked against the code and every finding fixed. Each behaviour fix has a test that fails on the old code.
 - `406f970` **Safety:**
