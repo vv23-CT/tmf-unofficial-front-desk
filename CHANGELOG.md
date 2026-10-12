@@ -6,6 +6,10 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-12
 
+### Delegation tested live; temporary gate removed
+- **Live test (operator):** with the vault not linked and its "entire wallet" delegations only on Ethereum and ApeChain, Re-check roles showed **Admitted** to Delegation Test with 3 on record, matching the 3 tokens the operator reports in the vault.
+- Removed the temporary **Delegation Test** gate. Pass Holder is again the only role the bot manages.
+
 ### Delegations made on Ethereum and ApeChain now count
 - **The problem:** a live delegation test found nothing. The operator's delegate.xyz delegations were on Ethereum and ApeChain, and the bot only read Robinhood Chain's registry.
 - **The change:** for Robinhood Chain holdings, the bot now also reads delegate.xyz on Ethereum and ApeChain (`delegationAlsoFrom`).
