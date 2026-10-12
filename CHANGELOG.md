@@ -33,6 +33,7 @@ Three independent reviews (code, delegation, wallet support) were checked agains
 - **Follow-up:** "no code" answers are cached for 1 hour (not 24), so a missing Multicall3 doesn't cost an extra lookup on every read.
 - **Documents:** SECURITY.md corrected in 12 places, and updated for all of the above. New full-history secret scan: nothing found.
 - 30 new tests (98 in total).
+- **Live test (operator):** the check-in showed ADMITTED, and a second Re-check within 30 s was refused. Delegation has not been tested live yet.
 - **delegate.xyz confirmed on Robinhood Chain:** the operator checked Blockscout. It shows DelegateRegistry (delegate.xyz v2), source verified (partial match) and 2,077 transactions. Delegation stays on, and the report and README were updated.
 
 ## 2026-10-11

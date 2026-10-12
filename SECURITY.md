@@ -205,6 +205,10 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
   This mutation testing is described from the development record; it can't be re-checked from the code itself.
 - **Security sweep, 2026-10-11 and 12:** three independent reviews (the whole codebase, the delegation logic, and wallet support), each finding checked against the code. The fixes are in commits `406f970`, `2a668d3` and `cad38e3`. Every behaviour fix has a test that fails on the previous code and passes on the fixed code; this was checked by running the new tests against both. The reviewer's two race scripts (one wallet on two accounts, a used link restored) were re-run against the fixed code and no longer succeed.
 - **Dependency audit:** `npm audit` reported **0 vulnerabilities** on 2026-10-12.
+- **Live test**, by the operator on 2026-10-12, on the code from the security sweep (`a7bd601`; later commits change documents only):
+  1. Checking in with the Pass wallet showed **ADMITTED** and kept the role.
+  2. Pressing Re-check twice within 30 seconds: the second press was refused.
+  3. Delegation through delegate.xyz has **not** been tested live yet. It is covered by automated tests that decode delegations with delegate.xyz's real data format.
 - **Live test**, by the server owner on 2026-10-11:
   1. A wallet holding 2 TMF Passes was verified. Blockscout's "Read contract" independently showed `balanceOf = 2`.
   2. The bot showed "✅ Pass Holder (2)" (the reply format at the time; today it reads "**Admitted** to the Breakroom: Pass Holder (2 on record)") and granted the role.
