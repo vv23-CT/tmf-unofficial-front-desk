@@ -6,6 +6,14 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-12
 
+### Delegations made on Ethereum and ApeChain now count
+- **The problem:** a live delegation test found nothing. The operator's delegate.xyz delegations were on Ethereum and ApeChain, and the bot only read Robinhood Chain's registry.
+- **The change:** for Robinhood Chain holdings, the bot now also reads delegate.xyz on Ethereum and ApeChain (`delegationAlsoFrom`).
+  - It accepts only "entire wallet" delegations with no rights restriction.
+  - The vault must have no contract code on Robinhood Chain (a plain wallet), since a contract wallet at the same address on another chain may have a different owner.
+  - All existing rules apply: one vault per account, never removing roles on read errors, and the 24-hour add-only limit.
+- Optional private RPC secrets `RPC_URL_1` and `RPC_URL_33139`. 9 new tests (107 in total).
+
 ### Temporary Delegation Test gate
 - Added a temporary gate, **Delegation Test**, for the ERC-721 `0x23313954729344C899B6c67951347cb57422cB64` on Robinhood Chain. It's there to test delegate.xyz delegation live with an NFT the operator holds in a vault, and will be removed after the test.
 
