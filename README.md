@@ -35,7 +35,7 @@ The page then shows **Admitted** with your Pass count, or **Declined** if the wa
 | Send a transaction, approve tokens, sign a permit, switch networks | **No.** The page has no code that asks for these. |
 | Ask for a private key or seed phrase | **No.** Never share these with anyone. |
 | Change your tokens or NFTs | **No.** It only reads balances from the blockchain. |
-| Discord permissions | **Manage Roles** only, and only for the Pass Holder role |
+| Discord permissions | **Manage Roles** only, and only for the Pass Holder role (plus a temporary Delegation Test role while delegation is tested) |
 
 ## What is stored
 

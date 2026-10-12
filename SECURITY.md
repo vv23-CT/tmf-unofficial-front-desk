@@ -43,7 +43,7 @@ The bot gives Discord roles to members who hold specific blockchain assets.
 3. They connect a wallet and **sign one text message**.
 4. The bot reads their holdings from the blockchain (read-only) and adds or removes the configured Discord roles.
 
-The current configuration (`config.json`) has one role, **Pass Holder**, for holders of at least 1 token of the ERC-721 contract `0xED37605FF0e513e46d50B26244DEb2024189751a` on Robinhood Chain (chain ID 4663).
+The current configuration (`config.json`) has one role, **Pass Holder**, for holders of at least 1 token of the ERC-721 contract `0xED37605FF0e513e46d50B26244DEb2024189751a` on Robinhood Chain (chain ID 4663). While delegation is tested live, a second, **temporary** role, **Delegation Test**, is given for at least 1 token of the ERC-721 contract `0x23313954729344C899B6c67951347cb57422cB64` on the same chain. It will be removed after the test.
 
 ---
 

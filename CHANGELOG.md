@@ -6,6 +6,9 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-12
 
+### Temporary Delegation Test gate
+- Added a temporary gate, **Delegation Test**, for the ERC-721 `0x23313954729344C899B6c67951347cb57422cB64` on Robinhood Chain. It's there to test delegate.xyz delegation live with an NFT the operator holds in a vault, and will be removed after the test.
+
 ### Private RPC secret: clearer errors, two paste mistakes fixed
 - **The problem:** a live re-check showed "Pending". `RPC_URL_4663` was set but wasn't an `https://` URL, and the public RPC fallback was rate limited ("Too Many Requests"). No roles changed.
 - **The fix:** the secret check now corrects a `wss://` address and a pasted `RPC_URL_4663=` prefix. It still refuses `http://`. For anything else it says what shape the value has (no `https://`, `http://`, spaces) and its length, never the value. SETUP.md gives the steps to re-save the secret.
