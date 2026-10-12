@@ -4,6 +4,36 @@ Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit hashes refer to the private source repository's history.
 
+## 2026-10-12
+
+### Security sweep fixes
+Three independent reviews (code, delegation, wallet support) were checked against the code and every finding fixed. Each behaviour fix has a test that fails on the old code.
+- `406f970` **Safety:**
+  - add-only on unreadable vaults lasts 24 h at most
+  - the wallet index decides who a wallet counts for (closes a race that put one wallet on two accounts)
+  - vault claims are released or moved when the delegation is gone, and only relevant delegations count or claim
+  - only Discord "Unknown Member" means a member left
+  - failed signatures use up link attempts
+  - a used link can't be restored by a race
+  - per-chain `delegation` switch, and a missing registry is a partial result
+  - TBAs linked to another member don't count, and unconfirmed scan failures are errors
+  - the doc link filter refuses `//` links
+- `2a668d3` **Abuse limits:**
+  - 10 links per member per UTC day
+  - cooldowns that work on `workers.dev` (isolate memory), with an optional Rate Limiting binding
+  - Remove a wallet cooldown and no-op writes skipped
+  - the cron cursor is written only when it changes
+  - the cron stops at 30 subrequests and resumes with the members it missed
+  - shorter RPC timeouts after a Discord reply
+- `cad38e3` **Delegation upgrades:**
+  - single-token (ERC721) and amount (ERC20) delegations count
+  - linking a vault wallet directly re-checks its previous delegate
+  - members are told when vaults couldn't be read
+  - tests decode delegations with the real ABI
+- **Follow-up:** "no code" answers are cached for 1 hour (not 24), so a missing Multicall3 doesn't cost an extra lookup on every read.
+- **Documents:** SECURITY.md corrected in 12 places, and updated for all of the above. New full-history secret scan: nothing found.
+- 30 new tests (98 in total).
+
 ## 2026-10-11
 
 ### Who runs it

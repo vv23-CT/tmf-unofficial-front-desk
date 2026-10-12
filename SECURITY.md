@@ -13,10 +13,10 @@ This document describes how Front Desk (code name `tmf-holder-roles`) works and 
 
 **Source availability.** The source code is private. Each claim names the file and test that implement it, so a reviewer given access by the operator can check every claim against the code. Readers without access can still check the points in "Check it yourself" below.
 
-- **Report date:** 2026-10-11
-- **Code covered:** the private source repository at the commit that contains this version of the report. On 2026-10-11 that is the documentation commit that follows `e578ed1` (see `CHANGELOG.md`).
+- **Report date:** 2026-10-12 (first version 2026-10-11)
+- **Code covered:** the private source repository at the commit that contains this version of the report. That is the documentation commit that follows the three security-sweep commits `406f970`, `2a668d3` and `cad38e3` (see `CHANGELOG.md`).
 - **Runtime:** a Cloudflare Worker at `https://tmf-holder-roles.vv23-ct.workers.dev`.
-- **Who runs it:** vv23 (GitHub `vv23-CT`), the sole operator and developer as of 2026-10-11. The bot, its site and this report are **not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF)**. The verify page, the Discord panel and the signed message all say so.
+- **Who runs it:** vv23 (GitHub `vv23-CT`), the sole operator and developer as of 2026-10-11. The bot, its site and this report are **not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF)**. The verify page and the Discord panel say so. The signed message names the desk as "an unofficial TMF community desk".
 - **How it was made:** vibe coded. vv23 built it by directing an AI coding assistant (Claude Code) instead of writing every line by hand, and is the only person working on it. The code was then reviewed and tested as this report describes (section 8). Nothing here relies on trusting how it was written: every claim names its code and test, and the "Check it yourself" steps below need no code access.
 
 ---
@@ -27,7 +27,7 @@ This document describes how Front Desk (code name `tmf-holder-roles`) works and 
 |---|---|
 | The bot's only permission is Manage Roles | In Discord: Server Settings → Integrations → the bot, or Server Settings → Roles → the bot's role |
 | You are on the real site | The address bar reads exactly `tmf-holder-roles.vv23-ct.workers.dev`, over HTTPS |
-| You are asked for a signature only | Your wallet shows one text message naming that domain and your address, ending "This is only a signature: no transaction, no approval, no gas." Any other request (approve, send, permit, switch network) does not come from this desk. |
+| You are asked for a signature only | Your wallet shows one text message. Its first line names that domain, the second is your address, and the statement after them says "This is only a signature: no transaction, no approval, no gas." The lines after that are the address of the site, a version, the network, a one-time number and the times it was issued and expires. Any other request (approve, send, permit, switch network) does not come from this desk. |
 | The page loads nothing from other sites | Browser developer tools → Network: every request goes to `tmf-holder-roles.vv23-ct.workers.dev` |
 | The security headers | Browser developer tools → Network → the page → Response headers: the `Content-Security-Policy` matches section 3 |
 | Links only come from the bot's private reply | The bot never sends links by direct message. A link in a DM is not from this desk. |
@@ -67,7 +67,7 @@ The bot only reads, using `eth_call` and `eth_getCode` (`src/chain.ts`). It hold
 
 | Permission | Granted? |
 |---|---|
-| Manage Roles | Yes. It's the only permission in the invite link (`permissions=268435456`, see `README.md`). |
+| Manage Roles | Yes. It's the only permission in the invite link (`permissions=268435456`, see `SETUP.md`). |
 | Anything else (Administrator, reading messages, kick, ban, managing channels…) | No |
 
 The bot changes **only** the role IDs listed in `config.json`. It refuses any other role, enforced in `Discord.roleChange` in `src/discord.ts` and tested in `test/flow.test.ts`. Discord itself also prevents the bot from changing roles above its own role.
@@ -81,7 +81,7 @@ The bot changes **only** the role IDs listed in `config.json`. It refuses any ot
    - Only requests from the configured server ID are acted on (`src/interactions.ts`).
 2. **Check in button → one-time link.** The bot creates a random 32-byte secret and gives the member a link containing their Discord ID and that secret, in a reply only they can see.
    - Only a SHA-256 hash of the secret is stored, and it expires after **600 seconds** (`Store.createLink`, `src/store.ts`).
-   - A new link can't be made within **15 seconds** of the previous one.
+   - A new link can't be made within **15 seconds** of the previous one, and one member gets at most **10 links per UTC day** (`linkAllowance`, `src/store.ts`; tested in `test/limits.test.ts`).
    - Creating a new link replaces the old one.
 3. **Page loads.** It is served with these security headers (`SECURITY_HEADERS`, `src/index.ts`):
    - Content-Security-Policy: `default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`
@@ -91,12 +91,12 @@ The bot changes **only** the role IDs listed in `config.json`. It refuses any ot
 
    **Static files** (the fonts, the panel image and this report's web page) are in `public/` and served by Cloudflare's static assets feature. `public/_headers` gives them the same security headers, except `Cache-Control: public, max-age=3600`, and a test fails if those headers drift from the Worker's. The fonts are Libre Caslon Text, Source Serif 4 and IBM Plex Mono, self-hosted under the SIL Open Font License (licence files in `public/fonts/`).
 
-   **Visible text** (the page, the panel and the replies) comes from `branding` in `config.json`. `parseBranding` in `src/config.ts` rejects it unless every field is one line within a length limit, contains no `<`, `>`, dashes, `!` or the word "invite", and the page and panel footers both contain "not affiliated".
+   **Visible text.** Most of what the page, the panel and the replies show comes from `branding` in `config.json`. `parseBranding` in `src/config.ts` rejects it unless every field is one line within a length limit, contains no `<`, `>`, dashes, `!` or the word "invite" (the `thumbnail` path is exempt from the word rules), and the page and panel footers both contain "not affiliated". Some text is not from `branding`: `appName` (the page title and the signed statement), the gate labels in replies, and fixed messages in the code (errors, button replies).
 4. **Start (`/api/start`).** The server checks the link: hash match, not expired, at most **5** attempts per link. It then **builds the message itself** as a Sign-In With Ethereum (EIP-4361) message (`buildMessage`, `src/siwe.ts`) containing:
    - the domain `tmf-holder-roles.vv23-ct.workers.dev`
    - the wallet address
    - the statement *"Link this wallet to Discord user <id> for Front Desk, an unofficial TMF community desk. This is only a signature: no transaction, no approval, no gas."*
-   - a random nonce
+   - the site address, the network the wallet reports (`eth_chainId`) and a random nonce
    - an issue time and an expiry **10 minutes** later
 
    The message is stored server-side.
@@ -104,7 +104,8 @@ The bot changes **only** the role IDs listed in `config.json`. It refuses any ot
 6. **Finish (`/api/finish`).** The server checks the signature against **the exact stored message** (`verifySignature`, `src/siwe.ts`):
    - The message must be valid EIP-4361, for the official domain, not expired.
    - The signature must come from the address in the message. Normal wallets are checked by recovering the signer locally; smart-contract wallets are checked on-chain (EIP-1271/ERC-6492) through viem.
-   - On success, the link is deleted (single use) and the wallet is linked.
+   - A failed signature counts as one of the link's 5 attempts; after 5, the link can't be used again.
+   - On success, the link is ended (single use): its record is replaced by a "used" marker, and the member's record keeps the used link's hash, so the link is refused even if a concurrent write restores its old record. The wallet is then linked.
 7. **Holdings and roles.** The bot reads balances and sets roles (`src/holdings.ts`, `src/service.ts`).
 
 The API only accepts requests whose `Origin` header is the official site (`src/index.ts`). Request bodies are capped at **16 KB** (`readBody`, `src/index.ts`).
@@ -117,12 +118,14 @@ The API only accepts requests whose `Origin` header is the official site (`src/i
 |---|---|---|
 | A link works once, only for the member who requested it, for 10 minutes | `src/store.ts`, `src/index.ts` | `test/flow.test.ts` ("links are single-use", "expired links are rejected", "a forged or tampered token is rejected") |
 | A signature from a different wallet, over a different message, or for a different domain is rejected | `src/siwe.ts` | `test/flow.test.ts` |
-| **One wallet counts for one Discord account.** Verifying a wallet that's already linked moves it, and the previous account's roles are re-checked. | `apiFinish`, `src/index.ts` | `test/flow.test.ts` ("one wallet counts for one Discord account…") |
-| A delegated vault (delegate.xyz) counts for only one Discord account. A wallet linked directly to someone else can't be borrowed through delegation. | `src/service.ts` | `test/flow.test.ts` ("a delegated vault counts for only one Discord account") |
+| **One wallet counts for one Discord account.** Verifying a wallet that's already linked moves it, and the previous account's roles are re-checked. The wallet index (`wallet:<address>`) decides: if two sign-ins race and leave a wallet on two records, the next re-check drops it from the account the index doesn't name. | `apiFinish`, `src/index.ts`; `recheck`, `src/service.ts` | `test/flow.test.ts` ("one wallet counts for one Discord account…", "a wallet left on two records by a race…") |
+| A delegated vault (delegate.xyz) counts for only one Discord account. The claim is released when that member no longer has the delegation, and moves when another member has it and the claimant doesn't. A wallet or token-bound account linked directly to someone else can't be borrowed through delegation. | `src/service.ts` | `test/flow.test.ts` ("a delegated vault counts for only one Discord account", "a vault claim moves…", "a revoked delegation removes the role…", "a token-bound account linked directly to another member…") |
+| Only relevant delegations count or claim a vault: the whole wallet, a whole gate or TBA contract, or one token / an amount of a gate contract. All must have no rights restriction and be addressed to the member's own wallet. At most 10 vaults per check, counted after that filter. | `src/holdings.ts` | `test/holdings.test.ts`, `test/flow.test.ts` ("junk delegations from outsiders can't push a real vault out of the cap") |
 | At most 3 wallets per member | `src/index.ts` | `test/flow.test.ts` |
-| Roles are **never removed because a blockchain read failed**. If delegation data can't be read, roles can only be added. | `src/service.ts`, `src/holdings.ts` | `test/flow.test.ts` ("an RPC outage never removes roles", "a failed delegation lookup…") |
+| Roles are **never removed because a blockchain read failed**. If delegation data can't be read, roles can only be added, for **24 hours at most** from the first failure in a row. After that, roles sync normally and unreadable vaults count as zero, so a member can't keep a role after selling by making their own delegation lookup fail. | `src/service.ts`, `src/holdings.ts` | `test/flow.test.ts` ("an RPC outage never removes roles", "a failed delegation lookup…", "add-only on unreadable vaults lasts 24 hours at most…") |
+| Only Discord's "Unknown Member" answer means a member left. Any other "not found" (for example the bot removed from the server) changes nothing. | `memberRoles`, `src/discord.ts` | `test/flow.test.ts` ("a 404 for anything but Unknown Member…") |
 | Only roles in `config.json` are ever changed | `src/discord.ts` | `test/flow.test.ts` |
-| Re-check: at most once per 30 seconds per member (edge cache, best effort per data centre) | `src/cooldown.ts`, `src/interactions.ts` | `test/interactions.test.ts` |
+| Re-check: at most once per 30 seconds per member; Remove a wallet: once per 15 seconds. Best effort, see section 10. | `src/cooldown.ts`, `src/interactions.ts` | `test/interactions.test.ts`, `test/limits.test.ts` |
 | Bot replies never ping anyone (`allowed_mentions: { parse: [] }`) | `src/interactions.ts` | `test/interactions.test.ts` |
 | `/verify-setup`, which posts the panel, needs Manage Server or Administrator | `src/interactions.ts` | `test/interactions.test.ts` |
 
@@ -134,12 +137,12 @@ Storage is Cloudflare KV. Every key and what it holds:
 
 | Key | Content | Lifetime |
 |---|---|---|
-| `link:<discordUserId>` | SHA-256 hash of the link secret, creation/expiry time, attempt count, the pending message to sign | Expires after 600 s, or deleted when used |
-| `user:<discordUserId>` | Linked wallet addresses and when each was added | Until unlinked, or the member leaves the server |
+| `link:<discordUserId>` | SHA-256 hash of the link secret, creation/expiry time, attempt count, the pending message to sign, and the day's link count. After use, a "used" marker with the creation time and day count only. | The link works for 600 s; the record is kept until the end of the UTC day |
+| `user:<discordUserId>` | Linked wallet addresses and when each was added; the vaults this member holds the claim for; when vault reads first failed in a row (if they are failing); the hash of the last link used | Until every wallet is removed, or the member leaves the server |
 | `wallet:<address>` | The Discord user ID the wallet belongs to | Until unlinked, or the member leaves |
-| `vault:<address>` | The Discord user ID a delegated vault counts for | Until reassigned |
-| `meta:cursor` | Position of the periodic re-check | Rolling |
-| `cache:code:<chain>:<address>`, `cache:nomulticall:<chain>` | Whether an address has contract code; whether Multicall3 works on a chain | 24 hours |
+| `vault:<address>` | The Discord user ID a delegated vault counts for | Until released (delegation gone, member unlinks or leaves) or moved |
+| `meta:cursor`, `meta:leftover` | Position of the periodic re-check; members the last run didn't reach | Rolling |
+| `cache:code:<chain>:<address>`, `cache:nomulticall:<chain>` | Whether an address has contract code; whether Multicall3 works on a chain | 24 hours ("no code": 1 hour) |
 
 No private keys, seed phrases, signatures, Discord login tokens or IP addresses are stored. Wallet addresses and Discord IDs are pseudonymous identifiers.
 
@@ -152,11 +155,12 @@ No private keys, seed phrases, signatures, Discord login tokens or IP addresses 
 | `DISCORD_BOT_TOKEN` | Cloudflare encrypted secret | Adds and removes roles. Sent only to `https://discord.com/api/v10/` (tested in `test/flow.test.ts`). |
 | `RPC_URL_4663` | Cloudflare encrypted secret | Private RPC endpoint, which contains an API key |
 
-Neither secret is in the source repository or its git history. On 2026-10-11 every commit up to and including `e578ed1` (21 commits, 194 file versions, including the 79 files inside a deleted art-kit archive) was scanned for Discord bot tokens, webhook URLs, RPC URLs with keys, GitHub and cloud tokens, private keys and API-key patterns. The only matches were the placeholder `SECRETKEY` in a test, an all-zero salt and the public Discord application key.
+Neither secret is in the source repository or its git history. On 2026-10-12 every commit up to and including `cad38e3` (28 commits, 257 file versions, including the 79 files inside a deleted art-kit archive) was scanned for Discord bot tokens, webhook URLs, RPC URLs with keys, GitHub and cloud tokens, private keys and API-key patterns. The only matches were the placeholder `SECRETKEY` in a test, an all-zero salt and the public Discord application key. An independent review on 2026-10-11 scanned the 25 commits that existed then and found the same.
 
 Error messages shown to members:
-- never include error text that could contain a secret (`explainFailure`, `src/discord.ts`)
-- have URLs removed and are cut to 160 characters (`describeError`, `src/chain.ts`)
+- for Discord failures, are fixed texts that never include the token or the raw error (`explainFailure`, `src/discord.ts`)
+- for blockchain failures, can include the RPC server's own error text, with every URL removed and cut to 160 characters (`describeError`, `src/chain.ts`). A provider that put an API key in its error text outside a URL would expose it there; none has been observed.
+- can name a missing or wrong secret by its name (for example "no RPC_URL_4663 secret found"), never its value
 
 Both behaviours are tested in `test/holdings.test.ts`, `test/chain.test.ts` and `test/flow.test.ts`.
 
@@ -167,15 +171,16 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 ## 7. Blockchain reads
 
 - **Endpoints:** the private RPC (`RPC_URL_4663`) is tried first, then Robinhood's public RPC `https://rpc.mainnet.chain.robinhood.com` (`src/chain.ts`).
-- **Limits:** a 20-second timeout per request, a 2 MB response limit, 2 retries.
-- **Multicall3:** used where it works. On Robinhood Chain it failed, so direct calls are used instead, and that fact is cached for 24 hours.
-- **ERC-6551 (Token Bound Accounts)** and **delegate.xyz** support exist in the code but aren't enabled for the current configuration: `tba` is empty in `config.json`. Delegation is only used on chains where contract code exists at the delegate.xyz registry address. Whether that registry is deployed on Robinhood Chain hasn't been independently confirmed. It could not be checked while preparing this report, because that environment's network policy blocks the Robinhood RPC.
+- **Limits:** a 20-second timeout per request, a 2 MB response limit, 2 retries. Work that runs after a Discord reply uses 8 seconds and 1 retry, to fit Cloudflare's time limit there. The 10-minute re-check stops starting new members after 30 outbound requests (the free plan allows 50) and starts with the members it missed next time.
+- **Multicall3:** used where it works. Observed by the operator on 2026-10-11: on Robinhood Chain, bundled calls failed while direct calls worked, so direct calls are used and that fact is cached for 24 hours. Multicall3's own deployment list has no entry for chain 4663.
+- **delegate.xyz is on** for Robinhood Chain (`"delegation": true` in `config.json`). delegate.xyz's official README lists the registry as deployed on Robinhood at `0x00000000000000447e69651d841bD8D104Bed493`. That has not been confirmed on-chain for this report, because the environment that prepared it can't reach the Robinhood RPC or explorer. If the registry has no code there, every check is a partial result (roles only added, for 24 hours at most) and the operator switches delegation off.
+- **ERC-6551 (Token Bound Accounts)** support exists in the code but isn't enabled: `tba` is empty in `config.json`.
 
 ---
 
 ## 8. Testing performed
 
-- **Automated tests:** 68, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
+- **Automated tests:** 98, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
 - **Mutation testing**, done manually during development: deliberate bugs were planted in a copy of the code, one at a time, and the test suite was run each time. 19 such bugs were tried, and every one caused a test failure. They included:
   - skipping the link-secret check, the link expiry or single use
   - accepting any signer
@@ -191,10 +196,13 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
   - sharing a vault across accounts
   - not releasing wallets when a member leaves
   - the Multicall3 fallback
-- **Dependency audit:** `npm audit` reported **0 vulnerabilities** on 2026-10-11.
+
+  This mutation testing is described from the development record; it can't be re-checked from the code itself.
+- **Security sweep, 2026-10-11 and 12:** three independent reviews (the whole codebase, the delegation logic, and wallet support), each finding checked against the code. The fixes are in commits `406f970`, `2a668d3` and `cad38e3`. Every behaviour fix has a test that fails on the previous code and passes on the fixed code; this was checked by running the new tests against both. The reviewer's two race scripts (one wallet on two accounts, a used link restored) were re-run against the fixed code and no longer succeed.
+- **Dependency audit:** `npm audit` reported **0 vulnerabilities** on 2026-10-12.
 - **Live test**, by the server owner on 2026-10-11:
   1. A wallet holding 2 TMF Passes was verified. Blockscout's "Read contract" independently showed `balanceOf = 2`.
-  2. The bot showed "✅ Pass Holder (2)" and granted the role.
+  2. The bot showed "✅ Pass Holder (2)" (the reply format at the time; today it reads "**Admitted** to the Breakroom: Pass Holder (2 on record)") and granted the role.
 
 ---
 
@@ -202,21 +210,24 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 
 | Package | Version | Used for |
 |---|---|---|
-| `viem` | 2.56.9 | The only runtime dependency: signature checks, ABI encoding, blockchain reads. It depends on `@noble/curves`, `@noble/hashes`, `@scure/base`, `@scure/bip32`, `@scure/bip39` and `abitype`. |
+| `viem` | 2.56.9 | The only runtime dependency: signature checks, ABI encoding, blockchain reads. Its own dependencies are `@noble/curves`, `@noble/hashes`, `@scure/bip32`, `@scure/bip39`, `abitype`, `isows`, `ox` and `ws`. |
 | `wrangler` | 4.149.0 | Build/deploy tool only, not included in the deployed code |
 | `typescript` | 6.0.3 | Type checking only |
 | `@cloudflare/workers-types` | 5.20261006.1 | Type definitions only |
 
-Versions are pinned exactly (`.npmrc` `save-exact=true`, plus `package-lock.json`). GitHub Actions are pinned to full commit SHAs.
+Versions are pinned exactly (`.npmrc` `save-exact=true`, plus `package-lock.json`). GitHub Actions are pinned to full commit SHAs; that those SHAs are the tagged releases named in the comments (v6.1.0, v6.5.0) was not re-checked for this report.
 
 ---
 
 ## 10. Known limitations
 
-- **Single-use links rely on Cloudflare KV**, which is eventually consistent, so a deleted key can briefly still be readable at another location. A link is bound to one Discord member and needs that member's wallet signature, so a reuse inside that window can only re-link the same member's own wallet.
+- **Cloudflare KV is eventually consistent**, so writes made at one location can take up to about a minute to be seen at another. The checks above (single-use links, one wallet per account, one claim per vault) use KV, so in that window two requests can both pass. The effects are temporary: the next re-check settles wallets and vault claims, and a used link is refused once the member's record carries its hash. Fully atomic checks would need Durable Objects, which this free setup doesn't use.
+- **Whoever holds a link can use it.** A link is bound to one Discord member, but anyone who has it (for example a wallet company's link service, see below) could link a wallet *they* control to that member while it is valid. They can't take anything, and the member can remove that wallet under My papers.
 - **Mobile "Open in wallet" buttons pass the page URL**, including the one-time link, through the wallet company's own link service (MetaMask, Coinbase, Trust).
 - **Holdings come from the RPC providers.** The bot trusts the configured RPC endpoints (the private provider and Robinhood's public RPC) to report blockchain data correctly.
-- **The Re-check cooldown is per Cloudflare data centre**, not global.
+- **Cooldowns are best effort.** Cloudflare's edge cache has no effect on `*.workers.dev` addresses (Cloudflare's Cache API documentation), so on this address the cooldowns rely on the memory of each Cloudflare isolate, which is not shared between isolates or data centres. A Cloudflare Rate Limiting binding is supported if configured (`RATE_LIMITER`); it is not configured today. The daily link budget is stored with the link record and does apply across isolates.
+- **Delegation failures and the 24-hour limit.** Anyone can create delegations to any wallet, including junk ones that make a lookup fail. If a member's vault lookup keeps failing for more than 24 hours, roles that came only from vaults are removed until the lookup works again.
+- **The free plan's daily storage limit** (1,000 KV writes) is shared by everyone. The daily link budget bounds what one member can use, but many accounts together could still use it up, which would stop new check-ins until midnight UTC.
 - **Holdings are re-checked periodically:** 5 members every 10 minutes (`recheckBatchSize`, `wrangler.toml` cron). A sale removes the role at the next re-check, not instantly.
 - **The site is on a free `workers.dev` address.** Members should only use links from the bot's private reply; the bot never sends links by DM.
 - **Anyone with push access to the source repository's `main` branch can change the deployed bot**, because Cloudflare deploys automatically from it.
