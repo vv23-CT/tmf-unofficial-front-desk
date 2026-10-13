@@ -18,13 +18,15 @@ Front Desk is vibe coded. vv23 built it by directing an AI coding assistant (Cla
 
 ## How to check in safely
 
-1. In the server's #verify channel, press **Check in** on the Front Desk panel.
+1. In the server's #digital-check-in channel, press **Check in** on the Front Desk panel.
 2. Use only the private link in the reply that appears. It works once, only for you, for 10 minutes. **Front Desk never sends links by direct message.**
 3. Before connecting a wallet, check that the address bar reads exactly `tmf-holder-roles.vv23-ct.workers.dev`.
 4. Your wallet should ask for **one signature**. The message names the same domain and your wallet address, and says: "This is only a signature: no transaction, no approval, no gas."
 5. If anything asks you to **approve**, **send**, **pay** or **confirm a transaction**, close the page. Front Desk never asks for that.
 
 The page then shows **Admitted** with your Pass count, or **Declined** if the wallet holds no Pass. **Pending** means the blockchain did not answer, and nothing was changed.
+
+**Rather not connect a wallet?** Open a private thread in #waiting-room instead. Staff check your Pass by hand there, which can take days.
 
 ## What Front Desk can and cannot do
 

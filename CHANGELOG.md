@@ -8,6 +8,7 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ### Wording
 - What your wallet signs is now called a "message" everywhere. The word "text" was dropped.
+- The check-in channel is now **#digital-check-in** (it was #verify). The Discord app is now named **Unofficial TMF Front Desk**.
 
 ## 2026-10-12
 
