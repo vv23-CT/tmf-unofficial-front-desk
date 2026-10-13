@@ -6,6 +6,9 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-13
 
+### Private RPCs for Ethereum and ApeChain
+- The secrets `RPC_URL_1` and `RPC_URL_33139` are set, so delegate.xyz lookups on Ethereum and ApeChain use a private RPC first and the free public RPCs only as a fallback. No code change. After setting them, Re-check roles showed **Admitted** with no errors.
+
 ### Security sweep 2
 Three independent reviews, each finding checked against the code. 15 new tests (122 in total); 13 of the 14 that cover behaviour fail on the previous code.
 - **Smart-contract wallet sign-in is checked on Robinhood Chain only.** Adding Ethereum and ApeChain for delegations had also let the browser choose either of them for the on-chain signature check. A contract wallet at the same address on another chain can have a different owner, so that could have linked someone else's Robinhood wallet.
