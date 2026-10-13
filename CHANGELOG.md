@@ -6,6 +6,17 @@ All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit h
 
 ## 2026-10-13
 
+### Security sweep 2
+Three independent reviews, each finding checked against the code. 15 new tests (122 in total); 13 of the 14 that cover behaviour fail on the previous code.
+- **Smart-contract wallet sign-in is checked on Robinhood Chain only.** Adding Ethereum and ApeChain for delegations had also let the browser choose either of them for the on-chain signature check. A contract wallet at the same address on another chain can have a different owner, so that could have linked someone else's Robinhood wallet.
+- **Junk delegations can't crowd out a real vault.** Anyone can delegate to anyone. A vault now counts, and is claimed, only if it holds something relevant. Up to 200 vaults and 200 token delegations are read; passing a limit gives a partial result (roles only added) instead of dropping a vault.
+- **Delegations from Ethereum and ApeChain need a plain wallet on both chains**, not only on Robinhood. EIP-7702 accounts count as plain.
+- **A token-bound account another member claims as a vault doesn't count twice.** (TBA support is off today.)
+- **Cheaper to abuse less:** parallel finishes for one member run one at a time per isolate; a wrong plain signature from a wallet without code never reaches the RPC; reloading the page reuses the message without a storage write; "Remove a wallet" with a wallet that isn't linked no longer runs a re-check.
+- The 3-wallet limit is checked before the link is used up.
+- The `register-commands` workflow runs in a GitHub environment (`discord-admin`).
+- Documents corrected: what an unused link keeps, what counts as an attempt, the optional RPC secrets, the live-test commits, the secret scan (now all commits), the Actions SHAs (checked), and three uses of a word the house style avoids.
+
 ### Wording
 - What your wallet signs is now called a "message" everywhere. The word "text" was dropped.
 - The check-in channel is now **#digital-check-in** (it was #verify). The Discord app is now named **Unofficial TMF Front Desk**.
@@ -117,7 +128,7 @@ Three independent reviews (code, delegation, wallet support) were checked agains
 - `95b1404`: Public address set to `https://tmf-holder-roles.vv23-ct.workers.dev`.
 - `c265a3f`: Storage (KV namespace) ID set.
 - `af76d4a`: Pass Holder gate, for ERC-721 `0xED37605FF0e513e46d50B26244DEb2024189751a` on Robinhood Chain (4663).
-- `7ae1df2`: Discord application ID and public key set; README invite link fixed.
+- `7ae1df2`: Discord application ID and public key set; README authorization link fixed.
 
 ### Initial release
 - `b80465d`: Free token-gating bot on Cloudflare Workers:

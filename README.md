@@ -44,7 +44,7 @@ The page then shows **Admitted** with your Pass count, or **Declined** if the wa
 - Your Discord user ID.
 - The public addresses of the wallets you link (up to 3), and when each was added.
 - If you use delegate.xyz: which vaults count for you, so one vault counts for one account only.
-- While a link is open: a hash of its secret and the message to sign. When the link is used or expires, only its creation time and the day's link count remain, until the end of the day (UTC).
+- While a link is open: a hash of its secret and the message to sign. When the link is used, only its creation time and the day's link count remain. An unused link's record, including the message to sign, is kept until the end of the day (UTC) and then deleted.
 
 No private keys, seed phrases, signatures or IP addresses are stored. Removing your last wallet deletes your record. If you leave the server, it is deleted at the next automatic re-check. The security report lists every stored item.
 
