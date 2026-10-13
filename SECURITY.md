@@ -27,7 +27,7 @@ This document describes how Front Desk (code name `tmf-holder-roles`) works and 
 |---|---|
 | The bot's only permission is Manage Roles | In Discord: Server Settings → Integrations → the bot, or Server Settings → Roles → the bot's role |
 | You are on the real site | The address bar reads exactly `tmf-holder-roles.vv23-ct.workers.dev`, over HTTPS |
-| You are asked for a signature only | Your wallet shows one text message. Its first line names that domain, the second is your address, and the statement after them says "This is only a signature: no transaction, no approval, no gas." The lines after that are the address of the site, a version, the network, a one-time number and the times it was issued and expires. Any other request (approve, send, permit, switch network) does not come from this desk. |
+| You are asked for a signature only | Your wallet shows one message. Its first line names that domain, the second is your address, and the statement after them says "This is only a signature: no transaction, no approval, no gas." The lines after that are the address of the site, a version, the network, a one-time number and the times it was issued and expires. Any other request (approve, send, permit, switch network) does not come from this desk. |
 | The page loads nothing from other sites | Browser developer tools → Network: every request goes to `tmf-holder-roles.vv23-ct.workers.dev` |
 | The security headers | Browser developer tools → Network → the page → Response headers: the `Content-Security-Policy` matches section 3 |
 | Links only come from the bot's private reply | The bot never sends links by direct message. A link in a DM is not from this desk. |
@@ -40,7 +40,7 @@ The bot gives Discord roles to members who hold specific blockchain assets.
 
 1. A member clicks **Check in** on the bot's panel in the Discord server (or uses `/verify`).
 2. They open a private, one-time link.
-3. They connect a wallet and **sign one text message**.
+3. They connect a wallet and **sign one message**.
 4. The bot reads their holdings from the blockchain (read-only) and adds or removes the configured Discord roles.
 
 The current configuration (`config.json`) has one role, **Pass Holder**, for holders of at least 1 token of the ERC-721 contract `0xED37605FF0e513e46d50B26244DEb2024189751a` on Robinhood Chain (chain ID 4663).
@@ -55,7 +55,7 @@ The current configuration (`config.json`) has one role, **Pass Holder**, for hol
 |---|---|---|
 | Ask the wallet for its address (`eth_requestAccounts`) | Yes | `src/web.ts` |
 | Ask the wallet which network it's on (`eth_chainId`) | Yes | `src/web.ts` |
-| Ask the wallet to sign a text message (`personal_sign`) | Yes, once per verification | `src/web.ts` |
+| Ask the wallet to sign a message (`personal_sign`) | Yes, once per verification | `src/web.ts` |
 | Send a transaction, approve tokens, sign a permit or typed data, switch networks | **No.** The page contains no code that calls `eth_sendTransaction`, `eth_signTypedData*`, `wallet_*` or any other wallet method. | `src/web.ts` (these 3 calls are the page's only wallet requests) |
 | Read private keys or seed phrases | **No.** Nothing in the code asks for them. | `src/web.ts` |
 

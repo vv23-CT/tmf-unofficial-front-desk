@@ -4,6 +4,11 @@ Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit hashes refer to the private source repository's history.
 
+## 2026-10-13
+
+### Wording
+- What your wallet signs is now called a "message" everywhere. The word "text" was dropped.
+
 ## 2026-10-12
 
 ### Delegation tested live; temporary gate removed

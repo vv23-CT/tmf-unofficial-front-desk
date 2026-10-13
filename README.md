@@ -4,7 +4,7 @@ Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 **Unofficial.** Front Desk is run by vv23 (GitHub `vv23-CT`), its sole developer. It is not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF).
 
-Front Desk is a Discord bot with a small website. It gives holders of a **TMF Pass** the **Pass Holder** role, which admits them to the Breakroom. You prove you hold a Pass by signing one text message with your wallet. Signing costs nothing and moves nothing.
+Front Desk is a Discord bot with a small website. It gives holders of a **TMF Pass** the **Pass Holder** role, which admits them to the Breakroom. You prove you hold a Pass by signing one message with your wallet. Signing costs nothing and moves nothing.
 
 - **Website:** https://tmf-holder-roles.vv23-ct.workers.dev
 - **Security report:** [SECURITY.md](SECURITY.md), also at https://tmf-holder-roles.vv23-ct.workers.dev/security
@@ -21,7 +21,7 @@ Front Desk is vibe coded. vv23 built it by directing an AI coding assistant (Cla
 1. In the server's #verify channel, press **Check in** on the Front Desk panel.
 2. Use only the private link in the reply that appears. It works once, only for you, for 10 minutes. **Front Desk never sends links by direct message.**
 3. Before connecting a wallet, check that the address bar reads exactly `tmf-holder-roles.vv23-ct.workers.dev`.
-4. Your wallet should ask for **one text signature**. The message names the same domain and your wallet address, and says: "This is only a signature: no transaction, no approval, no gas."
+4. Your wallet should ask for **one signature**. The message names the same domain and your wallet address, and says: "This is only a signature: no transaction, no approval, no gas."
 5. If anything asks you to **approve**, **send**, **pay** or **confirm a transaction**, close the page. Front Desk never asks for that.
 
 The page then shows **Admitted** with your Pass count, or **Declined** if the wallet holds no Pass. **Pending** means the blockchain did not answer, and nothing was changed.
@@ -31,7 +31,7 @@ The page then shows **Admitted** with your Pass count, or **Declined** if the wa
 | | |
 |---|---|
 | Ask your wallet for its address and its network | Yes |
-| Ask your wallet to sign one text message | Yes, once per check-in |
+| Ask your wallet to sign one message | Yes, once per check-in |
 | Send a transaction, approve tokens, sign a permit, switch networks | **No.** The page has no code that asks for these. |
 | Ask for a private key or seed phrase | **No.** Never share these with anyone. |
 | Change your tokens or NFTs | **No.** It only reads balances from the blockchain. |
