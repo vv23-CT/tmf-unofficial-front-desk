@@ -154,16 +154,16 @@ No private keys, seed phrases, signatures, Discord login tokens or IP addresses 
 
 | Secret | Where it lives | Purpose |
 |---|---|---|
-| `DISCORD_BOT_TOKEN` | Cloudflare encrypted secret | Adds and removes roles. Sent only to `https://discord.com/api/v10/` (tested in `test/flow.test.ts`). |
-| `RPC_URL_1`, `RPC_URL_33139` (set on 2026-10-13) | Cloudflare encrypted secret | Private RPC endpoints for Ethereum and ApeChain delegation lookups, handled exactly like `RPC_URL_4663`. If they fail, the public endpoints in section 7 are used. |
-| `RPC_URL_4663` | Cloudflare encrypted secret | Private RPC endpoint, which contains an API key. Only an encrypted address is used: `https://`, or a `wss://` address used over `https://` on the same host. `http://` is refused. If the name was pasted into the value (`RPC_URL_4663=…`), it is removed. When the value can't be used, the error names only its shape and length, never the value (`rpcOverridesFromEnv`, `src/chain.ts`; tested in `test/chain.test.ts`). |
+| The bot token | Cloudflare encrypted secret | Adds and removes roles. Sent only to `https://discord.com/api/v10/` (tested in `test/flow.test.ts`). |
+| The private Ethereum and ApeChain RPC URLs (set on 2026-10-13) | Cloudflare encrypted secret | Private RPC endpoints for Ethereum and ApeChain delegation lookups, handled exactly like the Robinhood Chain one. If they fail, the public endpoints in section 7 are used. |
+| The private Robinhood Chain RPC URL | Cloudflare encrypted secret | Private RPC endpoint, which contains an API key. Only an encrypted address is used: `https://`, or a `wss://` address used over `https://` on the same host. `http://` is refused. If the secret's name was pasted into the value, it is removed. When the value can't be used, the error names only its shape and length, never the value (`rpcOverridesFromEnv`, `src/chain.ts`; tested in `test/chain.test.ts`). |
 
 No secret is in the source repository or its git history. On 2026-10-13 all 40 commits of the source repository and all 14 of the public documents repository were scanned again for the same patterns, with no matches. On 2026-10-12 every commit up to and including `cad38e3` (28 commits, 257 file versions, including the 79 files inside a deleted art-kit archive) was scanned for Discord bot tokens, webhook URLs, RPC URLs with keys, GitHub and cloud tokens, private keys and API-key patterns. The only matches were the placeholder `SECRETKEY` in a test, an all-zero salt and the public Discord application key. An independent review on 2026-10-11 scanned the 25 commits that existed then and found the same.
 
 Error messages shown to members:
 - for Discord failures, are fixed texts that never include the token or the raw error (`explainFailure`, `src/discord.ts`)
 - for blockchain failures, can include the RPC server's own error text, with every URL removed and cut to 160 characters (`describeError`, `src/chain.ts`). A provider that put an API key in its error text outside a URL would expose it there; none has been observed.
-- can name a missing or wrong secret by its name (for example "no RPC_URL_4663 secret found"), never its value
+- can say that a private RPC is missing or unusable (for example "no private RPC set"), never its name or value
 
 Both behaviours are tested in `test/holdings.test.ts`, `test/chain.test.ts` and `test/flow.test.ts`.
 
@@ -173,9 +173,9 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 
 ## 7. Blockchain reads
 
-- **Endpoints:** for each chain, a private RPC secret (`RPC_URL_<chain ID>`) is tried first if set, then the chain's public RPC from `config.json` (`src/chain.ts`):
-  - **Robinhood Chain (4663):** `RPC_URL_4663` (set), then `https://rpc.mainnet.chain.robinhood.com`.
-  - **Ethereum (1)** and **ApeChain (33139)** are read only for delegate.xyz delegations: `RPC_URL_1` / `RPC_URL_33139` if set, then `https://ethereum.reth.rs/rpc` and `https://rpc.apechain.com/http` (the defaults viem ships for those chains).
+- **Endpoints:** for each chain, a private RPC URL (one Cloudflare secret per chain) is tried first if set, then the chain's public RPC from `config.json` (`src/chain.ts`):
+  - **Robinhood Chain (4663):** the private RPC (set), then `https://rpc.mainnet.chain.robinhood.com`.
+  - **Ethereum (1)** and **ApeChain (33139)** are read only for delegate.xyz delegations: their private RPCs (set), then `https://ethereum.reth.rs/rpc` and `https://rpc.apechain.com/http` (the defaults viem ships for those chains).
 - **Limits:** a 20-second timeout per request, a 2 MB response limit, and 2 retries (3 for the public RPC, which often answers "Too Many Requests"). Retries wait 1 to 1.5 seconds and double each time. Work that runs after a Discord reply uses shorter limits to fit Cloudflare's time limit there: 8 seconds and 1 retry for the private RPC, 6 seconds and 2 retries for the public RPC. The 10-minute re-check stops starting new members after 30 outbound requests (the free plan allows 50) and starts with the members it missed next time.
 - **Multicall3:** used where it works. Observed by the operator on 2026-10-11: on Robinhood Chain, bundled calls failed while direct calls worked, so direct calls are used and that fact is cached for 24 hours. Multicall3's own deployment list has no entry for chain 4663.
 - **Delegations from other chains:** Robinhood Chain also honours delegations made on Ethereum and ApeChain (`"delegationAlsoFrom": [1, 33139]`), under the rule in section 4. delegate.xyz's official README lists the registry at the same address on Ethereum and ApeChain. If one of those chains can't be read, the result is partial: roles are only added, for 24 hours at most.
@@ -191,7 +191,7 @@ Public values in `wrangler.toml` and `config.json`: the Discord application ID a
 
 ## 8. Testing performed
 
-- **Automated tests:** 122, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
+- **Automated tests:** 123, using Node's built-in test runner, with no network access (`npm test`). All pass. They run on every push in GitHub Actions (`.github/workflows/test.yml`).
 - **Mutation testing**, done manually during development: deliberate bugs were planted in a copy of the code, one at a time, and the test suite was run each time. 19 such bugs were tried, and every one caused a test failure. They included:
   - skipping the link-secret check, the link expiry or single use
   - accepting any signer
@@ -249,7 +249,7 @@ Versions are pinned exactly (`.npmrc` `save-exact=true`, plus `package-lock.json
 - **Mobile "Open in wallet" buttons pass the page URL**, including the one-time link, through the wallet company's own link service (MetaMask, Coinbase, Trust).
 - **Holdings come from the RPC providers.** The bot trusts the configured RPC endpoints (the private provider, Robinhood's public RPC, and for delegations the Ethereum and ApeChain RPCs) to report blockchain data correctly. A wrong answer from the Ethereum or ApeChain RPC could add or hide a delegation from those chains.
 - **The plain-wallet check reflects both chains today.** A wallet that later gains contract code stops counting for delegations from other chains; that is the safe direction. A "plain wallet" answer is cached for up to 1 hour, so a contract deployed at that address within the hour still counts until then.
-- **Cooldowns are best effort.** Cloudflare's edge cache has no effect on `*.workers.dev` addresses (Cloudflare's Cache API documentation), so on this address the cooldowns rely on the memory of each Cloudflare isolate, which is not shared between isolates or data centres. A Cloudflare Rate Limiting binding is supported if configured (`RATE_LIMITER`); it is not configured today. The daily link budget is stored with the link record and does apply across isolates.
+- **Cooldowns are best effort.** Cloudflare's edge cache has no effect on `*.workers.dev` addresses (Cloudflare's Cache API documentation), so on this address the cooldowns rely on the memory of each Cloudflare isolate, which is not shared between isolates or data centres. A Cloudflare Rate Limiting binding is supported if configured; it is not configured today. The daily link budget is stored with the link record and does apply across isolates.
 - **Delegation failures and the 24-hour limit.** Anyone can create delegations to any wallet. Junk can't push a real vault out (section 4), but enough of it (more than 200 delegations, or a list too large to read) makes the lookup partial or fail. If that lasts more than 24 hours, roles that came only from vaults are removed until the lookup works again. A member affected by this can link the vault wallet directly instead.
 - **The free plan's daily storage limit** (1,000 KV writes) is shared by everyone. The daily link budget bounds what one member can use (up to about 70 writes a day for one account that keeps failing), but many accounts together could still use it up, which would stop new check-ins until midnight UTC.
 - **Holdings are re-checked periodically:** 5 members every 10 minutes (`recheckBatchSize`, `wrangler.toml` cron). A sale removes the role at the next re-check, not instantly.
@@ -262,7 +262,7 @@ Versions are pinned exactly (`.npmrc` `save-exact=true`, plus `package-lock.json
 
 - 2FA on the GitHub, Cloudflare, Discord and RPC-provider accounts.
 - Bot role placed directly above the holder roles and below all staff roles.
-- `DISCORD_BOT_TOKEN` and `RPC_URL_4663` stored as **Secrets** in Cloudflare, under Production.
+- The bot token and the private RPC URLs stored as **Secrets** in Cloudflare, under Production.
 - Discord app: Public Bot off; only Guild Install enabled.
 - **If something looks wrong:**
   1. Remove the bot from the server, or take away its Manage Roles permission.

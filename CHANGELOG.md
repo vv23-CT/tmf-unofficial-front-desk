@@ -4,10 +4,15 @@ Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit hashes refer to the private source repository's history.
 
+## 2026-10-14
+
+### Secret names out of public text
+- The public documents and the messages members can see no longer name the bot's secrets; they describe them instead ("the bot token", "the private RPC"). No secret value was ever published: the full-history scans found none. Older versions in the public repository's history still contain the names, which unlock nothing on their own.
+
 ## 2026-10-13
 
 ### Private RPCs for Ethereum and ApeChain
-- The secrets `RPC_URL_1` and `RPC_URL_33139` are set, so delegate.xyz lookups on Ethereum and ApeChain use a private RPC first and the free public RPCs only as a fallback. No code change. After setting them, Re-check roles showed **Admitted** with no errors.
+- Private RPC URLs for Ethereum and ApeChain are set as Cloudflare secrets, so delegate.xyz lookups on Ethereum and ApeChain use a private RPC first and the free public RPCs only as a fallback. No code change. After setting them, Re-check roles showed **Admitted** with no errors.
 
 ### Security sweep 2
 Three independent reviews, each finding checked against the code. 15 new tests (122 in total); 13 of the 14 that cover behaviour fail on the previous code.
@@ -36,14 +41,14 @@ Three independent reviews, each finding checked against the code. 15 new tests (
   - It accepts only "entire wallet" delegations with no rights restriction.
   - The vault must have no contract code on Robinhood Chain (a plain wallet), since a contract wallet at the same address on another chain may have a different owner.
   - All existing rules apply: one vault per account, never removing roles on read errors, and the 24-hour add-only limit.
-- Optional private RPC secrets `RPC_URL_1` and `RPC_URL_33139`. 9 new tests (107 in total).
+- Optional private RPC secrets for Ethereum and ApeChain. 9 new tests (107 in total).
 
 ### Temporary Delegation Test gate
 - Added a temporary gate, **Delegation Test**, for the ERC-721 `0x23313954729344C899B6c67951347cb57422cB64` on Robinhood Chain. It's there to test delegate.xyz delegation live with an NFT the operator holds in a vault, and will be removed after the test.
 
 ### Private RPC secret: clearer errors, two paste mistakes fixed
-- **The problem:** a live re-check showed "Pending". `RPC_URL_4663` was set but wasn't an `https://` URL, and the public RPC fallback was rate limited ("Too Many Requests"). No roles changed.
-- **The fix:** the secret check now corrects a `wss://` address and a pasted `RPC_URL_4663=` prefix. It still refuses `http://`. For anything else it says what shape the value has (no `https://`, `http://`, spaces) and its length, never the value. SETUP.md gives the steps to re-save the secret.
+- **The problem:** a live re-check showed "Pending". the private Robinhood Chain RPC secret was set but wasn't an `https://` URL, and the public RPC fallback was rate limited ("Too Many Requests"). No roles changed.
+- **The fix:** the secret check now corrects a `wss://` address and the secret's name pasted in front of the value. It still refuses `http://`. For anything else it says what shape the value has (no `https://`, `http://`, spaces) and its length, never the value. SETUP.md gives the steps to re-save the secret.
 - **The public RPC now retries more patiently when it is busy:** 3 retries starting at 1.5 s, or 2 retries after a Discord reply.
 
 ### Security sweep fixes
@@ -108,7 +113,7 @@ Three independent reviews (code, delegation, wallet support) were checked agains
 - Added `SECURITY.md` (the public security report) and this changelog.
 
 ### Live-test fixes (Robinhood Chain)
-- `bea3d04`: Read `RPC_URL_<chainId>` directly by name; say when a value is set but isn't an `https://` URL.
+- `bea3d04`: Read each chain's private RPC secret directly by name; say when a value is set but isn't an `https://` URL.
 - `e00cc2e`: Try the private RPC first, then the public RPC, and report each endpoint's failure separately. Every error detail shows the deployed build ID.
 - `90fefdb`: Support a private RPC as a Cloudflare secret. Cache "contract exists" and "Multicall3 unusable" in KV for 24 hours. Gentler retries.
 - `1ac6429`: Trim spaces and line breaks around the bot token secret.
