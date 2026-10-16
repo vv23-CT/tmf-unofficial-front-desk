@@ -2,6 +2,8 @@
 
 Run by vv23. Vibe coded by a Web 3 enthusiast.
 
+**Retired on 2026-10-16.** Front Desk no longer runs. Its website `tmf-holder-roles.vv23-ct.workers.dev` is shut down, the bot has been removed, and its stored data is deleted. If anything at that address asks you to sign, it is not from this project, so close it. The Unofficial Mutual Fun Discord now uses the Gated bot in #gated-verify. The rest of this document is kept as a record of how Front Desk worked.
+
 **Unofficial.** Front Desk is run by vv23 (GitHub `vv23-CT`), its sole developer. It is not affiliated with, endorsed by, or speaking for The Mutual Fun (TMF).
 
 Front Desk is a Discord bot with a small website. It gives holders of a **TMF Pass** the **Pass Holder** role, which admits them to the Breakroom. You prove you hold a Pass by signing one message with your wallet. Signing costs nothing and moves nothing.

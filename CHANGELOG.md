@@ -4,6 +4,14 @@ Run by vv23. Vibe coded by a Web 3 enthusiast.
 
 All changes to Front Desk (code name `tmf-holder-roles`), newest first. Commit hashes refer to the private source repository's history.
 
+## 2026-10-16
+
+### Front Desk retired
+- The server's wallet check moved to the Gated bot (#gated-verify). Front Desk was removed from the server on 2026-10-15.
+- The Worker, its secrets and its stored data (linked wallets) are deleted, so the old address no longer works.
+- The Discord application and its bot token are deleted, and the private RPC keys are revoked.
+- The GitHub build connection and the command-registration setup are removed. The source and these documents are kept as a record.
+
 ## 2026-10-14
 
 ### Secret names out of public text

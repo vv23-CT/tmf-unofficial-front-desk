@@ -2,6 +2,8 @@
 
 Run by vv23. Vibe coded by a Web 3 enthusiast.
 
+**Retired on 2026-10-16.** Front Desk no longer runs. Its website `tmf-holder-roles.vv23-ct.workers.dev` is shut down, the bot has been removed, and its stored data is deleted. If anything at that address asks you to sign, it is not from this project, so close it. The Unofficial Mutual Fun Discord now uses the Gated bot in #gated-verify. The rest of this document is kept as a record of how Front Desk worked.
+
 **Where to find this report:** the same text is published in three places:
 - on the bot's own site, at `https://tmf-holder-roles.vv23-ct.workers.dev/security` (linked from the verify page and the Discord panel)
 - in the public documents repository, at `https://github.com/vv23-CT/tmf-unofficial-front-desk` (`SECURITY.md`)
